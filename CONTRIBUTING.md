@@ -39,13 +39,24 @@ npm test
 npm run build
 ```
 
-All four must pass. If you changed anything the interface can reach, also run the browser journey
-against a local production server:
+All four must pass. If you changed anything the interface can reach, also run the browser journey.
+Use the dev server locally, because `next start` runs in production mode and the app deliberately
+refuses to serve without a database URL:
 
 ```bash
-npm run build && npx next start -p 3111
+npm run dev -- -p 3111
 PLAYWRIGHT_BASE_URL=http://127.0.0.1:3111 npm run test:browser
 ```
+
+To exercise the production bundle locally instead, point it at any Postgres first:
+
+```bash
+DATABASE_URL=postgresql://user:pass@localhost:5432/cryptotremor npm run build
+DATABASE_URL=postgresql://user:pass@localhost:5432/cryptotremor npx next start -p 3111
+```
+
+CI runs the same browser journey and the live verifier against a real Postgres service, so anything
+that passes there has passed the production persistence path.
 
 If you changed the engine, add tests for the normal case plus **boundary, empty, malformed and
 deterministic-repeat** inputs. The engine must stay total: it may never throw on unknown

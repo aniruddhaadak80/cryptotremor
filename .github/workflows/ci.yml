@@ -41,8 +41,26 @@ jobs:
   browser:
     name: browser journey
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     needs: quality
+    # A real Postgres so the journey exercises the production persistence path.
+    # The application deliberately refuses to serve in production without one.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cryptotremor
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/cryptotremor
     steps:
       - uses: actions/checkout@v4
 
@@ -64,18 +82,18 @@ jobs:
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Start a production server with the embedded database
+      - name: Build and start a production server
         run: |
           npm run build
           nohup npx next start -p 3111 > server.log 2>&1 &
-          for i in $(seq 1 40); do
+          for i in $(seq 1 45); do
             if curl -fsS http://127.0.0.1:3111/api/health > /dev/null; then
               echo "server ready"
               exit 0
             fi
             sleep 2
           done
-          echo "server did not become ready"
+          echo "server did not become healthy"
           cat server.log
           exit 1
 
@@ -83,6 +101,11 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:3111
         run: npm run test:browser
+
+      - name: Verify the deployment surface end to end
+        env:
+          PUBLIC_URL: http://127.0.0.1:3111
+        run: node scripts/verify-live.mjs http://127.0.0.1:3111
 
       - name: Upload failure artifacts
         if: failure()
@@ -92,4 +115,5 @@ jobs:
           path: |
             test-results/
             playwright-report/
+            server.log
           retention-days: 7
