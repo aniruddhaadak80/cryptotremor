@@ -9,13 +9,33 @@
 import { Pool } from "pg";
 import type { SqlClient } from "./types.ts";
 
+/**
+ * SSL is driven by the connection string, never forced on.
+ *
+ * Managed providers publish URLs carrying `sslmode=require`, and those keep
+ * TLS. A self-hosted Postgres that does not offer TLS connects without it
+ * instead of failing every query, which is what forcing SSL would do.
+ */
+export function sslForUrl(url: string): false | { rejectUnauthorized: boolean } {
+  let mode: string | undefined;
+  try {
+    mode = new URL(url).searchParams.get("sslmode") ?? undefined;
+  } catch {
+    mode = undefined;
+  }
+  if (!mode || mode === "disable" || mode === "allow" || mode === "prefer") return false;
+  // verify-full is the safe default for providers; hosted certificates are not
+  // always chain-trusted in serverless images, so the hostname is not enforced.
+  return { rejectUnauthorized: mode === "verify-full" || mode === "verify-ca" };
+}
+
 export function createPostgresClient(url: string): SqlClient {
   const pool = new Pool({
     connectionString: url,
     max: Number(process.env.DATABASE_POOL_MAX ?? 4),
     idleTimeoutMillis: 10_000,
     connectionTimeoutMillis: 8_000,
-    ssl: url.includes("sslmode=disable") ? undefined : { rejectUnauthorized: false },
+    ssl: sslForUrl(url),
   });
 
   const client: SqlClient = {
