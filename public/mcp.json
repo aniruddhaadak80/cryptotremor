@@ -1,0 +1,40 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/2024-11-05/server.schema.json",
+  "name": "io.github.aniruddhaadak80/cryptotremor",
+  "description": "Post-quantum migration readiness survey: estimate real Shor and Grover costs for a cryptographic estate, scrub the rupture timeline, sequence migration waves, record decisions and export a verifiable report.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/aniruddhaadak80/cryptotremor",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "github:aniruddhaadak80/cryptotremor",
+      "version": "1.0.0",
+      "transport": {
+        "type": "http",
+        "url": "https://cryptotremor.vercel.app/api/mcp"
+      }
+    }
+  ],
+  "servers": {
+    "cryptotremor": {
+      "type": "http",
+      "url": "https://cryptotremor.vercel.app/api/mcp",
+      "ownerHeader": "x-ct-owner"
+    }
+  },
+  "tools": [
+    "list_assets",
+    "get_asset",
+    "estimate_quantum_cost",
+    "plan_migration_waves",
+    "save_asset",
+    "record_decision",
+    "retire_asset",
+    "create_share_report",
+    "verify_integrity",
+    "strata_signals"
+  ]
+}

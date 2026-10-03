@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+/*
+ * Identity: a seismic hazard survey station.
+ *
+ * The interface is a geological cross-section, so the palette is a warm basalt
+ * ground carrying a copper-to-verdigris metallic duotone ramp, with one hazard
+ * accent reserved exclusively for rupture state. Nothing else is allowed to be
+ * red-hot, which is what makes the ruptures readable at a glance.
+ *
+ * Delta vs the previous build (an optical motion bench on bone paper): dark warm
+ * neutral instead of paper, a metallic ramp instead of a single accent, and a
+ * depth gutter measured in metres instead of a mono timecode rail.
+ */
+
+@theme {
+  --color-basalt-950: #0e0c0b;
+  --color-basalt-900: #151210;
+  --color-basalt-850: #1b1714;
+  --color-basalt-800: #221d19;
+  --color-basalt-750: #2b241f;
+  --color-basalt-700: #362d26;
+  --color-contour: #453a31;
+
+  --color-copper-100: #f6e3d2;
+  --color-copper-300: #e8b083;
+  --color-copper-400: #dc9558;
+  --color-copper-500: #c9793f;
+  --color-copper-600: #a55c2d;
+  --color-copper-700: #7d4421;
+
+  --color-verd-200: #cfe7de;
+  --color-verd-300: #93c9b8;
+  --color-verd-400: #6fb09c;
+  --color-verd-500: #4f9182;
+  --color-verd-600: #3b6f64;
+  --color-verd-700: #2c534b;
+
+  --color-hazard-300: #e8cd76;
+  --color-hazard-400: #d8b23a;
+  --color-hazard-500: #b8912a;
+
+  --color-ash-100: #f3ede1;
+  --color-ash-200: #e2dbcb;
+  --color-ash-300: #c4bba9;
+  --color-ash-400: #a2988a;
+  --color-ash-500: #7d746a;
+
+  --font-display: var(--font-familjen), ui-sans-serif, system-ui, sans-serif;
+  --font-data: var(--font-azeret), ui-monospace, SFMono-Regular, monospace;
+
+  --radius-slab: 2px;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    /* No global smooth scrolling: it animates programmatic scrolls, which
+       interferes with focus management and anchor jumps on a long page. The
+       header is sticky, so anything scrolled into view — a focused control, a
+       validation message — must clear it. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--color-basalt-950);
+    background-image:
+      radial-gradient(120% 80% at 50% -10%, rgba(201, 121, 63, 0.1), transparent 60%),
+      linear-gradient(180deg, #100e0d 0%, #0e0c0b 100%);
+    color: var(--color-ash-200);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Sediment banding: the page reads as a cross-section rather than a card grid. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 27px,
+      rgba(69, 58, 49, 0.16) 27px,
+      rgba(69, 58, 49, 0.16) 28px
+    );
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--color-ash-100);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-verd-300);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-copper-500);
+    color: var(--color-basalt-950);
+  }
+}
+
+@layer components {
+  /* The depth gutter: every data surface is pinned to a measured depth axis. */
+  .depth-gutter {
+    border-left: 1px solid var(--color-contour);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(69, 58, 49, 0.5) 0px,
+      rgba(69, 58, 49, 0.5) 1px,
+      transparent 1px,
+      transparent 22px
+    );
+  }
+
+  .slab {
+    background: linear-gradient(180deg, var(--color-basalt-850), var(--color-basalt-900));
+    border: 1px solid var(--color-basalt-700);
+    border-radius: var(--radius-slab);
+  }
+
+  .slab-raised {
+    background: linear-gradient(180deg, var(--color-basalt-800), var(--color-basalt-850));
+    border: 1px solid var(--color-basalt-700);
+    border-radius: var(--radius-slab);
+    box-shadow: 0 1px 0 rgba(226, 219, 203, 0.04) inset, 0 18px 40px -28px rgba(0, 0, 0, 0.9);
+  }
+
+  .label {
+    font-family: var(--font-data);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ash-400);
+  }
+
+  .tabular {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-slab);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    padding: 0.625rem 1.125rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease,
+      transform 140ms ease;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: linear-gradient(180deg, var(--color-copper-400), var(--color-copper-600));
+    color: #1a120c;
+    border-color: var(--color-copper-700);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(180deg, var(--color-copper-300), var(--color-copper-500));
+  }
+
+  .btn-secondary {
+    background: var(--color-basalt-800);
+    color: var(--color-ash-100);
+    border-color: var(--color-basalt-700);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--color-basalt-750);
+    border-color: var(--color-copper-600);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-ash-300);
+    border-color: transparent;
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    color: var(--color-ash-100);
+    background: var(--color-basalt-800);
+  }
+
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+    background: var(--color-basalt-900);
+    border: 1px solid var(--color-basalt-700);
+    border-radius: var(--radius-slab);
+    color: var(--color-ash-100);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9375rem;
+    font-family: var(--font-display);
+  }
+
+  .textarea {
+    font-family: var(--font-data);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .input::placeholder,
+  .textarea::placeholder {
+    color: var(--color-ash-500);
+  }
+
+  .input:focus,
+  .select:focus,
+  .textarea:focus {
+    border-color: var(--color-verd-500);
+    outline: none;
+  }
+
+  .band-critical {
+    color: var(--color-hazard-300);
+    border-color: var(--color-hazard-500);
+    background: rgba(184, 145, 42, 0.12);
+  }
+
+  .band-urgent {
+    color: var(--color-copper-300);
+    border-color: var(--color-copper-600);
+    background: rgba(201, 121, 63, 0.12);
+  }
+
+  .band-plan {
+    color: var(--color-verd-300);
+    border-color: var(--color-verd-600);
+    background: rgba(79, 145, 130, 0.12);
+  }
+
+  .band-watch {
+    color: var(--color-ash-200);
+    border-color: var(--color-basalt-700);
+    background: rgba(226, 219, 203, 0.06);
+  }
+
+  .band-settled {
+    color: var(--color-ash-400);
+    border-color: var(--color-basalt-700);
+    background: transparent;
+  }
+
+  .link-underline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-copper-600);
+  }
+
+  .link-underline:hover {
+    text-decoration-color: var(--color-copper-400);
+  }
+
+  /* Pen stroke for the seismograph trace. `pathLength={1}` normalizes the path,
+     so a dash of 1 covers it exactly regardless of the real path length. */
+  .trace-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: trace-draw 1100ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  }
+
+  @keyframes trace-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trace-line {
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

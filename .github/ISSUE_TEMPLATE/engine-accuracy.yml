@@ -1,0 +1,36 @@
+name: Engine accuracy
+description: The cost ledger, a rupture year or a factor is wrong, overconfident or misleading.
+title: "[engine] "
+labels: ["engine", "needs-citation"]
+body: |
+  ## What is wrong
+
+  Describe the specific claim that does not hold. "The numbers feel wrong" is not actionable —
+  quote the output you saw and the input that produced it.
+
+  ## Where it shows up
+
+  - [ ] Quantum cost ledger (logical qubits / physical qubits / operation count)
+  - [ ] Rupture year for an attacker scenario
+  - [ ] Exposure score or band
+  - [ ] Binding constraint (`data-lifetime`, `compliance`, `capability`)
+  - [ ] Grover wave ordering
+  - [ ] Compliance milestone
+
+  ## Evidence
+
+  Link the paper, standard or advisory that contradicts the current behaviour, with the exact
+  quoted wording and a page or section reference.
+
+  ## Reproduction
+
+  Paste the manifest row, the horizon year, the compliance regime and the attacker scenario.
+
+  ```csv
+  label,system,usage,algorithm,deployment,confidentialityYears,dataClass,ownerTeam
+  ```
+
+  ## Why this matters
+
+  Explain the decision someone would get wrong because of this. If it is a presentation problem —
+  something reads as more certain than it is — say which screen and which sentence.

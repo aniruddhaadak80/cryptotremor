@@ -1,0 +1,29 @@
+name: Compliance regime
+description: A migration deadline or regulatory timeline is missing or out of date.
+title: "[compliance] "
+labels: ["compliance", "needs-citation"]
+body: |
+  ## The regime
+
+  Authority and document title, for example a national cyber agency, a financial regulator, or a
+  sectoral body.
+
+  ## The milestone
+
+  Give the exact wording, the date, and which usage types it applies to
+  (`key-establishment`, `signature`, `certificate`, `data-at-rest`, `transport`, `integrity`).
+
+  ## Source
+
+  Link the primary document. A blog post summarising it is not enough; if only a secondary source
+  exists, say so and explain why the primary is unavailable.
+
+  ## Status
+
+  - [ ] The milestone is already in the registry and is wrong or dated
+  - [ ] The regime is entirely missing
+
+  ## Note
+
+  Cryptotremor reports milestones as **planning inputs, not compliance determinations**. Flagging an
+  error here is a bug, not a legal question — please keep the issue factual.

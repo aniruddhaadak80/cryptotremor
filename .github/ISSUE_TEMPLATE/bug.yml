@@ -1,0 +1,42 @@
+name: Bug or false statement
+description: Something does not work, or the interface says something that is not true.
+title: ""
+labels: ["bug"]
+body: |
+  ## What happened
+
+  Describe the observable behaviour. If a control did nothing, say which one and what you expected
+  it to do instead.
+
+  ## Steps to reproduce
+
+  1.
+  2.
+  3.
+
+  ## Expected
+
+  ## Actual
+
+  ## Environment
+
+  - Cryptotremor commit or deployment:
+  - Browser and version:
+  - Viewport (mobile or desktop):
+  - Running locally or against a deployment:
+
+  ## False statement, if that is the bug
+
+  If the interface asserts something untrue — a live label on fallback data, a score that does not
+  match the engine, a "deleted" row that is actually gone — quote the exact text and where it
+  appears. These are treated as high priority.
+
+  ## Checklist
+
+  - [ ] I searched existing issues
+  - [ ] I read [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md)
+  - [ ] Console or network errors are attached below, if any
+
+  ```
+  paste console output here
+  ```

@@ -1,0 +1,33 @@
+name: Manifest format or integration
+description: Cryptotremor should be able to read a format or source that it cannot read today.
+title: "[integration] "
+labels: ["integration", "good first issue"]
+body: |
+  ## What should be importable
+
+  Name the format, tool or inventory source: SPDX, CycloneDX, an OpenSSL config, a cloud KMS export,
+  a certificate authority inventory, a spreadsheet your team actually maintains.
+
+  ## Why it is worth adding
+
+  Who would use it, and what decision would it unblock? A format nobody can produce has no value.
+
+  ## What an implementation needs
+
+  - [ ] A link to the format's own specification
+  - [ ] A small real sample (redacted is fine) — 5 to 10 rows is enough
+  - [ ] The mapping from each source field to a Cryptotremor field:
+        `label`, `system`, `usage`, `algorithm`, `deployment`,
+        `confidentialityYears`, `dataClass`, `ownerTeam`
+  - [ ] What Cryptotremor cannot express from that source, stated plainly
+
+  ## Scope note
+
+  A parser plus fixtures plus tests is a good first contribution. Do not attempt a live scanner in
+  your first pull request — open an issue first and we will agree on the shape.
+
+  ## Checklist
+
+  - [ ] I read [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md)
+  - [ ] My change includes tests for boundary and malformed rows
+  - [ ] `npm run typecheck && npm run lint && npm test && npm run build` all pass
