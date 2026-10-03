@@ -50,3 +50,6 @@ next-env.d.ts
 /playwright/.cache/
 # Local tooling logs
 *.log
+
+.vercel
+.env*

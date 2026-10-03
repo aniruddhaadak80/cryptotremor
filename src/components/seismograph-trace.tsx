@@ -179,7 +179,7 @@ export function SeismographTrace({
         </span>
         {activePoint ? (
           <span className="tabular text-xs text-ash-300">
-            {activeYear}: {activePoint.harvested} exposed · intensity {activePoint.intensity}
+            {activeYear}: {activePoint.harvested} exposed &middot; {activePoint.intensity}% of the estate
           </span>
         ) : (
           <span className="tabular text-xs text-ash-500">hover or click a year</span>
