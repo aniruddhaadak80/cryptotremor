@@ -207,3 +207,28 @@ test("known exploited CVE adds evidence without inflating the weighted score", (
   assert.ok(exploited.factors.some((factor) => factor.key === "known-exploited"));
   assert.equal(exploited.rawScore, plain.rawScore);
 });
+
+test("a breached deadline never renders as a negative runway", () => {
+  // CNSA-2 has a 2025 signature milestone, so a 2034 horizon puts it long past due.
+  // yearsToBinding is legitimately negative here -- that is how the readout says
+  // "already breached" -- but the years figure is shown to the reader as a countdown,
+  // and a countdown of -9 years is not a countdown.
+  const result = score({ confidentialityYears: 1, usage: "signature" }, "cnsa-2", 2034);
+  assert.ok((result.compliance.yearsToBinding ?? 0) < 0, "fixture should be past due");
+
+  const leadTime = result.factors.find((factor) => factor.key === "migration-lead-time");
+  assert.ok(leadTime, "migration-lead-time factor is always reported");
+  assert.doesNotMatch(leadTime!.evidence, /-\d+\s+years?\s+of\s+runway/);
+
+  assert.doesNotMatch(result.recommendation, /-\d+\s+year/);
+});
+
+test("a breached deadline still says the milestone has passed", () => {
+  // The negative countdown is the bug; losing the fact that the deadline has passed
+  // would be worse. The past-due state must stay visible in prose.
+  const result = score({ confidentialityYears: 1, usage: "signature" }, "cnsa-2", 2034);
+  const clock = result.factors.find((factor) => factor.key === "compliance-clock");
+  assert.ok(clock, "compliance-clock factor is always reported");
+  assert.match(clock!.evidence, /already passed/i);
+  assert.match(result.recommendation, /already passed|past due/i);
+});

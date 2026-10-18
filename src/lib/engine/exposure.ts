@@ -234,7 +234,9 @@ export function scoreAsset(input: ExposureInput): ExposureResult {
       points: round2(leadTime * FACTOR_WEIGHTS.migrationLeadTime * 100),
       evidence: suppressed
         ? "Nothing to migrate."
-        : `Estimated ${effort} year${effort === 1 ? "" : "s"} of work to replace this, against ${yearsToBinding === null ? "no published deadline" : `${yearsToBinding} year${yearsToBinding === 1 ? "" : "s"} of runway`}.`,
+        : yearsToBinding !== null && yearsToBinding < 0
+          ? `Estimated ${effort} year${effort === 1 ? "" : "s"} of work to replace this, and the published deadline has already passed.`
+          : `Estimated ${effort} year${effort === 1 ? "" : "s"} of work to replace this, against ${yearsToBinding === null ? "no published deadline" : `${yearsToBinding} year${yearsToBinding === 1 ? "" : "s"} of runway`}.`,
       lever:
         effort > (yearsToBinding ?? 0)
           ? "Start earlier, or dual-deploy a hybrid handshake to buy runway."
@@ -348,8 +350,13 @@ function buildRecommendation(args: {
   switch (args.bindingConstraint) {
     case "data-lifetime":
       return `Move to ${args.target} now. ${round2(args.yearsExposed)} year(s) of data captured at the horizon would be readable after the modelled break in ${args.ruptureYear}, which is before the data must expire.`;
-    case "compliance":
-      return `Start now: ${args.regimeLabel} gives ${args.yearsToBinding === null ? "no runway" : `${args.yearsToBinding} year(s)`} and this migration is estimated at ${args.effort} year(s).`;
+    case "compliance": {
+      const runway =
+        args.yearsToBinding !== null && args.yearsToBinding < 0
+          ? `${args.regimeLabel} has already passed a deadline for this usage`
+          : `${args.regimeLabel} gives ${args.yearsToBinding === null ? "no runway" : `${args.yearsToBinding} year(s)`}`;
+      return `Start now: ${runway} and this migration is estimated at ${args.effort} year(s).`;
+    }
     case "capability":
       return `Schedule before ${args.ruptureYear}. Capability is the binding constraint, but ${args.effort} year(s) of work means the start date, not the break date, decides the outcome.`;
     default:
